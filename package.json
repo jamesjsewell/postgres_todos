@@ -1,0 +1,17 @@
+{
+  "name": "cypress_todos",
+  "version": "1.0.0",
+  "description": "cypress todo app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jamesjsewell",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^4.1.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.2",
+    "pg-promise": "^10.4.4"
+  }
+}

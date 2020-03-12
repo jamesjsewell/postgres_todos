@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Todos</title>
+    <link href="./public/css/normalize.css" rel="stylesheet" type="text/css" />
+    <link href="./public/css/skeleton.css" rel="stylesheet" type="text/css" />
+    <link href="./public/css/index.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="todos-container">
+      <h4>add todo</h4>
+      <div class="row">
+        <form id="todo-form" class="todo-form six columns">
+          <div class="row">
+            <div class="six columns">
+              <label for="title-input">Title</label>
+              <input
+                id="title-input"
+                class="u-full-width"
+                type="text"
+                name="title"
+                placeholder="title"
+              />
+            </div>
+            <div class="six columns">
+              <label for="add-todo-form-categories-select">Category</label>
+              <select id="add-todo-form-categories-select" class="u-full-width">
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="twelve columns">
+              <label for="description-input">Description</label>
+              <textarea
+                id="description-input"
+                class="u-full-width"
+                name="description"
+                placeholder="description"
+              ></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="six columns">
+              <button type="submit">submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <h4>in progress</h4>
+      <div id="todos-in-progress-container"></div>
+      <h4>complete</h4>
+      <div id="todos-complete-container"></div>
+    </div>
+    <script src="./index.js"></script>
+  </body>
+</html>
