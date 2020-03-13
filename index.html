@@ -8,6 +8,10 @@
     <link href="./public/css/normalize.css" rel="stylesheet" type="text/css" />
     <link href="./public/css/skeleton.css" rel="stylesheet" type="text/css" />
     <link href="./public/css/index.css" rel="stylesheet" type="text/css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="todos-container">
@@ -49,10 +53,16 @@
           </div>
         </form>
       </div>
-      <h4>in progress</h4>
-      <div id="todos-in-progress-container"></div>
-      <h4>complete</h4>
-      <div id="todos-complete-container"></div>
+      <div class="row">
+        <div class="six columns">
+          <h4>in progress</h4>
+          <div id="todos-in-progress-container"></div>
+        </div>
+        <div class="six columns">
+          <h4>done</h4>
+          <div id="todos-done-container"></div>
+        </div>
+      </div>
     </div>
     <script src="./index.js"></script>
   </body>

@@ -1,3 +1,36 @@
 .hide {
-    visibility: hidden;
+  display: none !important;
+}
+
+h5 {
+  margin-bottom: 0.5rem;
+}
+
+.todo {
+  margin: 15px;
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 5px;
+}
+
+.todo-edit-button {
+  padding: 2px;
+  border: none;
+}
+
+.edit-todo-form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0px;
+}
+
+.edit-todo-form .edit-todo-actions-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.edit-todo-actions-wrapper button {
+  margin-bottom: 0px;
 }
