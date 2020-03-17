@@ -70,13 +70,16 @@ router.put('/todos/:id', function(req, res) {
         : ''
     } ${userInput.body ? 'body=$2' : ''} ${
       userInput.body && userInput.category ? ',' : ''
-    }${userInput.category ? 'category=$3' : ''} WHERE id=${
+    }${userInput.category ? 'category=$3' : ''} ${
+      userInput.category && userInput.done ? ',' : ''
+    } ${Object.keys(userInput).includes('done') ? 'done=$4' : ''} WHERE id=${
       req.params.id
-    } RETURNING id,title,body,category`,
+    } RETURNING id,title,body,category,done`,
     [
       userInput.title,
       userInput.body,
-      userInput.category ? userInput.category : null
+      userInput.category ? userInput.category : null,
+      userInput.done ? 'TRUE' : 'FALSE'
     ],
     event => event
   ).then(data => {
