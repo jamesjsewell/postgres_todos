@@ -84,6 +84,15 @@ router.put('/todos/:id', function(req, res) {
   });
 });
 
+router.delete('/todos/:id', function(req, res) {
+  db.one(
+    `DELETE FROM todos WHERE id=${req.params.id} RETURNING id,title,body,category`,
+    event => event
+  ).then(data => {
+    res.json(data);
+  });
+});
+
 router.get('/categories', function(req, res) {
   db.any('SELECT * FROM categories').then(data => {
     res.json(data);
