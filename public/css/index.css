@@ -13,8 +13,19 @@ h5 {
   border-radius: 5px;
 }
 
-.todo-edit-button {
+.todo-title-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.todo-edit-buttons-wrapper {
+  display: flex;
+}
+
+.todo-edit-button, .todo-delete-button {
   padding: 2px;
+  margin: 5px;
   border: none;
 }
 

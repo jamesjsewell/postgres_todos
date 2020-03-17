@@ -1,25 +1,133 @@
+function renderTodo(todoData) {
+  const { id } = todoData;
+  const todosContainer = document.getElementById(
+    !todoData.done ? 'todos-in-progress-container' : 'todos-done-container'
+  );
+  const todoTemplate = `
+  <div id="todo-${id}-contents" class="todo-contents u-full-width">
+      <div class="todo-title-wrapper">
+          <div>
+              <h5>${todoData.title}</h5>
+          </div>
+          <div class="todo-edit-buttons-wrapper">
+            <button id="todo-${id}-delete-button" todo="${id}" class="todo-delete-button" ><i class="material-icons">delete</i></button>
+            <button id="todo-${id}-edit-button" todo="${id}" class="todo-edit-button u-pull-right"><i class="material-icons">create</i></button>
+          </div>
+      </div>
+      <div class="row">
+          <div class="twelve columns">
+              <p>${todoData.body}</h5>
+          </div>
+      
+      </div>
+      <div class="row">
+          <div class="twelve columns">
+              <label for="todo-${id}-complete-toggle">done</label>
+              <input id="todo-${id}-complete-toggle" todo="${id}" type="checkbox" ${
+    todoData.done ? 'checked' : ''
+  } />
+          </div>
+      </div>
+  </div>
+  <form id="todo-${id}-edit-form" todo="${id}" class="edit-todo-form hide">
+      <input name="title" type="text" placeholder="title" value="${
+        todoData.title
+      }"/>
+      <select placeholder="category">
+          <option value="" disabled selected>select category</option>
+      </select>
+      <textarea name="description" placeholder="description">${
+        todoData.body
+      }</textarea>
+      <div class="edit-todo-actions-wrapper">
+          <button id="todo-${id}-cancel-edit" class="cancel-edit-todo" type="submit">cancel</button>
+          <button class="save-edit-todo button-primary" type="submit">save</button>
+      </div>
+  </form>`;
+
+  function eventListeners() {
+    document
+      .getElementById(`todo-${id}-edit-button`)
+      .addEventListener('click', editTodo);
+
+    document
+      .getElementById(`todo-${id}-delete-button`)
+      .addEventListener('click', deleteTodo);
+
+    document
+      .getElementById(`todo-${id}-complete-toggle`)
+      .addEventListener('click', completeTodo);
+  }
+
+  const existingTodo = document.getElementById(`todo-${id}`);
+  if (existingTodo) {
+    existingTodo.innerHTML = todoTemplate;
+    eventListeners();
+    return;
+  }
+
+  const newTodo = document.createElement('div');
+  newTodo.setAttribute('id', `todo-${id}`);
+  newTodo.className = 'todo';
+  newTodo.innerHTML = todoTemplate;
+
+  todosContainer.prepend(newTodo);
+  eventListeners();
+}
+
+function completeTodo(e) {
+  const id = e.currentTarget.getAttributeNode('todo').value;
+  fetch(`http://localhost:3000/api/todos/${id}`, {
+    headers: { 'Content-type': 'application/json' },
+    method: 'put',
+    body: JSON.stringify({ done: e.currentTarget.checked ? true : false })
+  })
+    .then(res => res.json())
+    .then(updatedTodo => {
+      const todo = document.getElementById(`todo-${id}`);
+      if (!updatedTodo || !updatedTodo.done) {
+        document.getElementById('todos-in-progress-container').prepend(todo);
+        return;
+      }
+      document.getElementById('todos-done-container').prepend(todo);
+    });
+}
+
+function deleteTodo(e) {
+  const id = e.currentTarget.getAttributeNode('todo').value;
+  fetch(`http://localhost:3000/api/todos/${id}`, {
+    method: 'delete'
+  })
+    .then(res => res.json())
+    .then(deletedTodo => {
+      if (!deletedTodo) return;
+      document.getElementById(`todo-${deletedTodo.id}`).remove();
+    });
+}
+
 function editTodo(e) {
-  function showEditForm(i) {
-    document.getElementById(`todo-contents-${i}`).classList.add('hide');
-    document.getElementById(`edit-todo-form-${i}`).classList.remove('hide');
+  const id = e.currentTarget.getAttributeNode('todo').value;
+  function showEditForm() {
+    document.getElementById(`todo-${id}-contents`).classList.add('hide');
+    document.getElementById(`todo-${id}-edit-form`).classList.remove('hide');
   }
 
-  function hideEditForm(i) {
-    document.getElementById(`todo-contents-${i}`).classList.remove('hide');
-    document.getElementById(`edit-todo-form-${i}`).classList.add('hide');
+  function hideEditForm() {
+    document.getElementById(`todo-${id}-contents`).classList.remove('hide');
+    document.getElementById(`todo-${id}-edit-form`).classList.add('hide');
   }
-  const todoId = e.currentTarget.getAttributeNode('todo').value;
-  showEditForm(todoId);
 
-  const cancelEditButton = document.getElementById(`cancel-edit-${todoId}`);
+  showEditForm();
+
+  const cancelEditButton = document.getElementById(`todo-${id}-cancel-edit`);
 
   cancelEditButton.addEventListener('click', e => {
     document
-      .getElementById(`edit-todo-button-${todoId}`)
+      .getElementById(`todo-${id}-edit-button`)
       .addEventListener('click', editTodo);
-    hideEditForm(todoId);
+    hideEditForm();
   });
-  const editForm = document.getElementById(`edit-todo-form-${todoId}`);
+  const editForm = document.getElementById(`todo-${id}-edit-form`);
   editForm.addEventListener('submit', e => {
     e.preventDefault();
     const title = editForm.title.value;
@@ -40,66 +148,6 @@ function editTodo(e) {
         renderTodo(updatedTodo);
       });
   });
-}
-
-function renderTodo(todoData) {
-  const { id } = todoData;
-  const todosContainer = document.getElementById(
-    !todoData.done ? 'todos-in-progress-container' : 'todos-done-container'
-  );
-  const todoTemplate = `
-  <div id="todo-contents-${id}" class="todo-contents">
-      <div class="todo-title-wrapper row">
-          <div class="nine columns">
-              <h5>${todoData.title}</h5>
-          </div>
-          <div class="three columns">
-              <button id="edit-todo-button-${id}" todo="${id}" class="todo-edit-button u-pull-right"><i class="material-icons">create</i></button>
-          </div>
-      </div>
-      <div class="row">
-          <div class="twelve columns">
-              <p>${todoData.body}</h5>
-          </div>
-      
-      </div>
-      <div class="row">
-          <div class="twelve columns">
-              <label for="todo-complete-toggle">done</label>
-              <input id="todo-complete-toggle" type="checkbox" />
-          </div>
-      </div>
-  </div>
-  <form id="edit-todo-form-${id}" todo="${id}" class="edit-todo-form hide">
-      <input name="title" type="text" placeholder="title" value="${todoData.title}"/>
-      <select placeholder="category">
-          <option value="" disabled selected>select category</option>
-      </select>
-      <textarea name="description" placeholder="description">${todoData.body}</textarea>
-      <div class="edit-todo-actions-wrapper">
-          <button id="cancel-edit-${id}" class="cancel-edit-todo" type="submit">cancel</button>
-          <button id="save-edit-${id}" todo="${id}" class="save-edit-todo button-primary" type="submit">save</button>
-      </div>
-  </form>`;
-
-  const existingTodo = document.getElementById(`todo-${id}`);
-  if (existingTodo) {
-    existingTodo.innerHTML = todoTemplate;
-    document
-      .getElementById(`edit-todo-button-${id}`)
-      .addEventListener('click', editTodo);
-    return;
-  }
-
-  const newTodo = document.createElement('div');
-  newTodo.setAttribute('id', `todo-${id}`);
-  newTodo.className = 'todo';
-  newTodo.innerHTML = todoTemplate;
-
-  todosContainer.prepend(newTodo);
-  document
-    .getElementById(`edit-todo-button-${id}`)
-    .addEventListener('click', editTodo);
 }
 
 function addTodo(e) {
