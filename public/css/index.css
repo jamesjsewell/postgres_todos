@@ -6,6 +6,10 @@ body {
   display: none !important;
 }
 
+i {
+  cursor: pointer;
+}
+
 h5 {
   margin-bottom: 0.5rem;
 }
@@ -17,17 +21,33 @@ h5 {
 
 .category-chip {
   display: inline-flex;
-  align-items: center;
   margin: 5px;
   padding: 2px;
-  max-width: 100%;
   border: 1px solid #bbb;
   border-radius: 5px;
+}
+
+.category-chip-contents {
+  display: inline-flex;
 }
 
 .category-chip p {
   margin-bottom: 0px;
   padding: 2px;
+}
+
+.category-chip i {
+  margin: 2px;
+}
+
+.category-edit-form {
+  margin: 0px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.category-edit-form input {
+  margin: 0px;
 }
 
 .todo {
@@ -68,4 +88,18 @@ h5 {
 
 .edit-todo-actions-wrapper button {
   margin-bottom: 0px;
+}
+
+.edit-category-form {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.edit-category-form input {
+  margin-bottom: 0px;
+}
+
+.category-edit-button {
+  margin: 5px;
 }

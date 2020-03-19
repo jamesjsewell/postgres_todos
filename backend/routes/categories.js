@@ -22,18 +22,7 @@ router.get('/', function(req, res) {
 router.put('/:id', function(req, res) {
   const userInput = { ...req.body };
   db.one(
-    `UPDATE categories SET ${userInput.todo ? 'title=$1' : ''} ${
-      (userInput.title && userInput.body) ||
-      (userInput.title && userInput.category)
-        ? ','
-        : ''
-    } ${userInput.body ? 'body=$2' : ''} ${
-      userInput.body && userInput.category ? ',' : ''
-    }${userInput.category ? 'category=$3' : ''} ${
-      userInput.category && userInput.done ? ',' : ''
-    } ${Object.keys(userInput).includes('done') ? 'done=$4' : ''} WHERE id=${
-      req.params.id
-    } RETURNING id,category_name`,
+    `UPDATE categories SET category_name=$1 WHERE id=${req.params.id} RETURNING id,category_name`,
     [userInput.category_name],
     event => event
   ).then(data => {
@@ -43,7 +32,7 @@ router.put('/:id', function(req, res) {
 
 router.delete('/:id', function(req, res) {
   db.one(
-    `DELETE FROM todos WHERE id=${req.params.id} RETURNING id,title,body,category`,
+    `DELETE FROM categories WHERE id=${req.params.id} RETURNING id,category_name`,
     event => event
   ).then(data => {
     res.json(data);
