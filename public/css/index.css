@@ -1,9 +1,33 @@
+body {
+  padding: 20px;
+}
+
 .hide {
   display: none !important;
 }
 
 h5 {
   margin-bottom: 0.5rem;
+}
+
+.categories-form-wrapper {
+  border-left: 1px solid;
+  padding-left: 20px;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  margin: 5px;
+  padding: 2px;
+  max-width: 100%;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+}
+
+.category-chip p {
+  margin-bottom: 0px;
+  padding: 2px;
 }
 
 .todo {

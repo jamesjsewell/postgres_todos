@@ -171,6 +171,7 @@ document.getElementById('todo-form').addEventListener('submit', addTodo);
 
 function renderCategoriesPage() {
   document.getElementById('todos-container').className = 'hide';
+  document.getElementById('categories-container').className = '';
 }
 
 function renderTodos() {
@@ -191,6 +192,7 @@ function renderTodos() {
 
 function renderTodosPage() {
   document.getElementById('todos-container').className = '';
+  document.getElementById('categories-container').className = 'hide';
   renderTodos();
 }
 

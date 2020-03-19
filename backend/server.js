@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const routes = require('./routes/router');
+const todos = require('./routes/todos');
+const categories = require('./routes/categories');
 const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,6 +17,7 @@ app.use(function(req, res, next) {
   );
   next();
 });
-app.use('/api', routes);
+app.use('/api/todos', todos);
+app.use('/api/categories', categories);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
