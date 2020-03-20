@@ -1,13 +1,15 @@
-function renderTodo(todoData) {
-  const { id } = todoData;
+let categoriesCache = [];
+
+function renderTodo(todo) {
+  const { id, title, body, category, done } = todo;
   const todosContainer = document.getElementById(
-    !todoData.done ? 'todos-in-progress-container' : 'todos-done-container'
+    !done ? 'todos-in-progress-container' : 'todos-done-container'
   );
   const todoTemplate = `
   <div id="todo-${id}-contents" class="todo-contents u-full-width">
       <div class="todo-title-wrapper">
           <div>
-              <h5>${todoData.title}</h5>
+              <h5>${title}</h5>
           </div>
           <div class="todo-edit-buttons-wrapper">
             <button id="todo-${id}-delete-button" todo="${id}" class="todo-delete-button" ><i class="material-icons">delete</i></button>
@@ -16,7 +18,7 @@ function renderTodo(todoData) {
       </div>
       <div class="row">
           <div class="twelve columns">
-              <p>${todoData.body}</h5>
+              <p>${body}</h5>
           </div>
       
       </div>
@@ -24,21 +26,28 @@ function renderTodo(todoData) {
           <div class="twelve columns">
               <label for="todo-${id}-complete-toggle">done</label>
               <input id="todo-${id}-complete-toggle" todo="${id}" type="checkbox" ${
-    todoData.done ? 'checked' : ''
+    done ? 'checked' : ''
   } />
           </div>
       </div>
   </div>
   <form id="todo-${id}-edit-form" todo="${id}" class="edit-todo-form hide">
-      <input name="title" type="text" placeholder="title" value="${
-        todoData.title
-      }"/>
-      <select placeholder="category">
-          <option value="" disabled selected>select category</option>
+      <input name="title" type="text" placeholder="title" value="${title}"/>
+      <select name="category" placeholder="category">
+          <option value="" disabled ${
+            !category ? 'selected' : ''
+          }>select category</option>
+          ${categoriesCache
+            .map(
+              category => `
+            <option value="${category.id}" ${
+                category.id === todo.category ? 'selected' : ''
+              }>${category.category_name}</option>
+          `
+            )
+            .join('')}
       </select>
-      <textarea name="description" placeholder="description">${
-        todoData.body
-      }</textarea>
+      <textarea name="description" placeholder="description">${body}</textarea>
       <div class="edit-todo-actions-wrapper">
           <button id="todo-${id}-cancel-edit" class="cancel-edit-todo" type="submit">cancel</button>
           <button class="save-edit-todo button-primary" type="submit">save</button>
@@ -132,6 +141,7 @@ function editTodo(e) {
     e.preventDefault();
     const title = editForm.title.value;
     const description = editForm.description.value;
+    const category = editForm.category.value;
 
     fetch(
       `http://localhost:3000/api/todos/${
@@ -140,7 +150,7 @@ function editTodo(e) {
       {
         headers: { 'Content-type': 'application/json' },
         method: 'put',
-        body: JSON.stringify({ title, body: description })
+        body: JSON.stringify({ title, body: description, category })
       }
     )
       .then(res => res.json())
@@ -154,10 +164,11 @@ function addTodo(e) {
   e.preventDefault();
   const title = e.target.title.value;
   const description = e.target.description.value;
+  const category = e.target.category.value;
   fetch('http://localhost:3000/api/todos', {
     headers: { 'Content-type': 'application/json' },
     method: 'post',
-    body: JSON.stringify({ title, body: description })
+    body: JSON.stringify({ title, body: description, category })
   })
     .then(res => res.json())
     .then(todo => {
@@ -167,14 +178,14 @@ function addTodo(e) {
 
 document.getElementById('todo-form').addEventListener('submit', addTodo);
 
-function renderCategory(categoryData) {
-  const id = categoryData.id;
+function renderCategory(category) {
+  const id = category.id;
   const categoryChipsContainer = document.getElementById(
     'category-chips-container'
   );
   const categoryTemplate = `
     <div id="category-${id}-chip-contents" class="category-chip-contents">
-      <p>${categoryData.category_name}</p>
+      <p>${category.category_name}</p>
       <i id="category-${id}-edit" category="${id}" class="material-icons">
         create
       </i>
@@ -183,7 +194,7 @@ function renderCategory(categoryData) {
       </i>
     </div>
     <form id="category-${id}-edit-form" class="category-edit-form hide">
-      <input id="category-${id}-input" value="${categoryData.category_name}" />
+      <input id="category-${id}-input" value="${category.category_name}" />
       <i id="category-${id}-edit-cancel" class="material-icons category-edit-button">
         undo
       </i>
@@ -307,7 +318,7 @@ function fetchCategories() {
         document.getElementById('category-chips-container').innerHTML = '';
         return;
       }
-      for (let i = 1; i < categories.length; i++) {
+      for (let i = 0; i < categories.length; i++) {
         const category = categories[i];
         renderCategory(category);
       }
@@ -320,26 +331,44 @@ function renderCategoriesPage() {
   fetchCategories();
 }
 
-function fetchTodos() {
+function fetchTodosAndCategories() {
+  function getCategories(todos) {
+    fetch('http://localhost:3000/api/categories')
+      .then(res => res.json())
+      .then(categories => {
+        categoriesCache = categories;
+        document.getElementById(
+          'add-todo-form-categories-select'
+        ).innerHTML = `${categoriesCache
+          .map(
+            category => `
+          <option value="${category.id}">${category.category_name}</option>
+        `
+          )
+          .join('')}`;
+        if (!todos.length) {
+          document.getElementById('todos-in-progress-container').innerHTML = '';
+          document.getElementById('todos-done-container').innerHTML = '';
+          return;
+        }
+        for (let i = 1; i < todos.length; i++) {
+          const todo = todos[i];
+          renderTodo(todo);
+        }
+      });
+  }
+
   fetch('http://localhost:3000/api/todos')
     .then(res => res.json())
     .then(todos => {
-      if (!todos.length) {
-        document.getElementById('todos-in-progress-container').innerHTML = '';
-        document.getElementById('todos-done-container').innerHTML = '';
-        return;
-      }
-      for (let i = 1; i < todos.length; i++) {
-        const todo = todos[i];
-        renderTodo(todo);
-      }
+      getCategories(todos);
     });
 }
 
 function renderTodosPage() {
   document.getElementById('todos-view-wrapper').className = '';
   document.getElementById('categories-view-wrapper').className = 'hide';
-  fetchTodos();
+  fetchTodosAndCategories();
 }
 
 function router() {
