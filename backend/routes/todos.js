@@ -6,11 +6,7 @@ router.post('/', function(req, res) {
   const userInput = { ...req.body };
   db.one(
     'INSERT INTO todos VALUES(DEFAULT, $1, $2, $3) RETURNING id,title,body,category',
-    [
-      userInput.title,
-      userInput.body,
-      userInput.category ? userInput.category : null
-    ],
+    [userInput.title, userInput.body, Number(userInput.category)],
     event => event
   ).then(data => {
     res.json(data);
@@ -51,7 +47,7 @@ router.put('/:id', function(req, res) {
     [
       userInput.title,
       userInput.body,
-      userInput.category ? userInput.category : null,
+      Number(userInput.category),
       userInput.done ? 'TRUE' : 'FALSE'
     ],
     event => event
