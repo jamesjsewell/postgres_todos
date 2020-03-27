@@ -6,7 +6,7 @@ function renderTodo(todo) {
     !done ? 'todos-in-progress-container' : 'todos-done-container'
   );
   const todoTemplate = `
-  <div id="todo-${id}-contents" class="todo-contents u-full-width">
+  <div id="todo-${id}-contents" class="todo-contents" u-full-width">
       <div class="todo-title-wrapper">
           <div>
               <h5>${title}</h5>
@@ -71,12 +71,14 @@ function renderTodo(todo) {
   const existingTodo = document.getElementById(`todo-${id}`);
   if (existingTodo) {
     existingTodo.innerHTML = todoTemplate;
+    existingTodo.setAttribute('category', category);
     eventListeners();
     return;
   }
 
   const newTodo = document.createElement('div');
   newTodo.setAttribute('id', `todo-${id}`);
+  newTodo.setAttribute('category', category);
   newTodo.className = 'todo';
   newTodo.innerHTML = todoTemplate;
 
@@ -156,6 +158,11 @@ function editTodo(e) {
       .then(res => res.json())
       .then(updatedTodo => {
         renderTodo(updatedTodo);
+        if (
+          document.getElementById('categories-filter-select').value === 'none'
+        )
+          return;
+        filterTodos(document.getElementById('categories-filter-select').value);
       });
   });
 }
@@ -355,6 +362,15 @@ function fetchTodosAndCategories() {
           const todo = todos[i];
           renderTodo(todo);
         }
+
+        let categoryOptionsForSelect =
+          '<option value="none" selected disabled>Select a Category</option>';
+        for (const category of categories) {
+          categoryOptionsForSelect += `<option value="${category.id}">${category.category_name}</option>`;
+        }
+        document.getElementById(
+          'categories-filter-select'
+        ).innerHTML = categoryOptionsForSelect;
       });
   }
 
@@ -365,9 +381,32 @@ function fetchTodosAndCategories() {
     });
 }
 
+function filterTodos(category) {
+  const todos = document.querySelectorAll('[category]');
+  for (const todo of todos) {
+    if (todo.getAttributeNode('category').value !== category) {
+      todo.classList.add('hide');
+      continue;
+    }
+    todo.classList.remove('hide');
+  }
+  document.getElementById('clear-category-filter').classList.remove('hide');
+}
+
 function renderTodosPage() {
   document.getElementById('todos-view-wrapper').className = '';
   document.getElementById('categories-view-wrapper').className = 'hide';
+  const categorySelect = document.getElementById('categories-filter-select');
+  categorySelect.addEventListener('change', e => filterTodos(e.target.value));
+  const clearCategoryFilter = document.getElementById('clear-category-filter');
+  clearCategoryFilter.addEventListener('click', () => {
+    clearCategoryFilter.classList.add('hide');
+    categorySelect.value = 'none';
+    const todos = document.querySelectorAll('[category]');
+    for (const todo of todos) {
+      todo.classList.remove('hide');
+    }
+  });
   fetchTodosAndCategories();
 }
 

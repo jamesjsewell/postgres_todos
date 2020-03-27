@@ -50,6 +50,23 @@ h5 {
   margin: 0px;
 }
 
+.todo-category-filter {
+  display: flex;
+  align-items: center;
+}
+
+.todo-category-filter-wrapper {
+  margin-bottom: 20px;
+}
+
+.todo-category-filter select {
+  margin-bottom: 0px;
+}
+
+.todo-category-filter i {
+  margin: 5px;
+}
+
 .todo {
   margin: 15px;
   padding: 10px;
