@@ -1,9 +1,8 @@
--- DROP TABLE categories;
--- CREATE TABLE categories(
---     id SERIAL NOT NULL PRIMARY KEY,
---     category_name varchar(40)
--- );
-DROP TABLE todos;
+CREATE TABLE categories(
+    id SERIAL NOT NULL PRIMARY KEY,
+    category_name varchar(40)
+);
+
 CREATE TABLE todos(
     id SERIAL NOT NULL PRIMARY KEY,
     title varchar(20),

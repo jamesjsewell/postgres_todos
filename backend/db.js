@@ -1,7 +1,4 @@
-const initOptions = {
-  /* initialization options */
-};
-const pgp = require('pg-promise')(initOptions);
+const pgp = require('pg-promise')();
 
 const cn = {
   host: 'localhost',
