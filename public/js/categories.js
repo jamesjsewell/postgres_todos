@@ -81,6 +81,7 @@ function editCategory(e) {
   document
     .getElementById(`category-${id}-edit-save`)
     .addEventListener('click', e => {
+      showLoadingSpinner()
       const updatedName = document.getElementById(`category-${id}-input`).value;
       fetch(
         `http://localhost:3000/api/categories/${
@@ -95,11 +96,13 @@ function editCategory(e) {
         .then(res => res.json())
         .then(updatedCategory => {
           renderCategory(updatedCategory);
+          hideLoadingSpinner()
         });
     });
 }
 
 function deleteCategory(e) {
+  showLoadingSpinner()
   const id = e.currentTarget.getAttributeNode('category').value;
   fetch(`http://localhost:3000/api/categories/${id}`, {
     method: 'delete'
@@ -108,10 +111,12 @@ function deleteCategory(e) {
     .then(deletedCategory => {
       if (!deletedCategory) return;
       document.getElementById(`category-${deletedCategory.id}-chip`).remove();
+      hideLoadingSpinner()
     });
 }
 
 function addCategory(e) {
+  showLoadingSpinner()
   e.preventDefault();
   const name = e.target.category_name.value;
   fetch('http://localhost:3000/api/categories', {
@@ -122,10 +127,12 @@ function addCategory(e) {
     .then(res => res.json())
     .then(category => {
       renderCategory(category);
+      hideLoadingSpinner()
     });
 }
 
 function fetchCategories() {
+  showLoadingSpinner()
   fetch('http://localhost:3000/api/categories')
     .then(res => res.json())
     .then(categories => {
@@ -137,6 +144,7 @@ function fetchCategories() {
         const category = categories[i];
         renderCategory(category);
       }
+      hideLoadingSpinner()
     });
 }
 

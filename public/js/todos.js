@@ -88,6 +88,7 @@ function renderTodo(todo) {
 }
 
 function completeTodo(e) {
+  showLoadingSpinner()
   const id = e.currentTarget.getAttributeNode('todo').value;
   fetch(`http://localhost:3000/api/todos/${id}`, {
     headers: { 'Content-type': 'application/json' },
@@ -102,10 +103,12 @@ function completeTodo(e) {
         return;
       }
       document.getElementById('todos-done-container').prepend(todo);
+      hideLoadingSpinner()
     });
 }
 
 function deleteTodo(e) {
+  showLoadingSpinner()
   const id = e.currentTarget.getAttributeNode('todo').value;
   fetch(`http://localhost:3000/api/todos/${id}`, {
     method: 'delete'
@@ -114,6 +117,7 @@ function deleteTodo(e) {
     .then(deletedTodo => {
       if (!deletedTodo) return;
       document.getElementById(`todo-${deletedTodo.id}`).remove();
+      hideLoadingSpinner()
     });
 }
 
@@ -141,6 +145,7 @@ function editTodo(e) {
   });
   const editForm = document.getElementById(`todo-${id}-edit-form`);
   editForm.addEventListener('submit', e => {
+    showLoadingSpinner()
     e.preventDefault();
     const title = editForm.title.value;
     const description = editForm.description.value;
@@ -158,6 +163,7 @@ function editTodo(e) {
     )
       .then(res => res.json())
       .then(updatedTodo => {
+        hideLoadingSpinner()
         renderTodo(updatedTodo);
         clearCategoryFilter();
       });
@@ -165,6 +171,7 @@ function editTodo(e) {
 }
 
 function addTodo(e) {
+  showLoadingSpinner()
   e.preventDefault();
   const title = e.target.title.value;
   const description = e.target.description.value;
@@ -177,6 +184,7 @@ function addTodo(e) {
     .then(res => res.json())
     .then(todo => {
       renderTodo(todo);
+      hideLoadingSpinner()
     });
 }
 
@@ -232,6 +240,7 @@ function renderTodos(todos) {
 }
 
 function getCategories(todos) {
+  showLoadingSpinner()
   fetch('http://localhost:3000/api/categories')
     .then(res => res.json())
     .then(categories => {
@@ -239,14 +248,17 @@ function getCategories(todos) {
       renderAddTodoForm();
       addCategoryFilterOptions();
       renderTodos(todos);
+      hideLoadingSpinner()
     });
 }
 
 function fetchTodosAndCategories() {
+  showLoadingSpinner()
   fetch('http://localhost:3000/api/todos')
     .then(res => res.json())
     .then(todos => {
       getCategories(todos);
+      hideLoadingSpinner()
     });
 }
 

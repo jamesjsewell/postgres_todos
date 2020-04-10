@@ -1,3 +1,12 @@
+
+function showLoadingSpinner() {
+  document.getElementById('loading-spinner').classList.remove('hide')
+}
+
+function hideLoadingSpinner() {
+  document.getElementById('loading-spinner').classList.add('hide')
+}
+
 function router() {
   if (window.location.hash === '#categories') {
     // this function is in ./public/js/categories.js
@@ -11,4 +20,5 @@ function router() {
   }
 }
 router();
+
 window.addEventListener('hashchange', router, false);
