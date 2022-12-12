@@ -10,7 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "cypress": "^4.1.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "nodemon": "^2.0.2",
     "pg-promise": "^10.4.4"
   }
